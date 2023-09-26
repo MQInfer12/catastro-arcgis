@@ -1,11 +1,10 @@
 <script lang="ts">
   import Logo from '../../../assets/images/logococha.png'
-    import Search from './Search.svelte';
 </script>
 
 <header>
   <img src={Logo} alt="Cocha" />
-  <Search />
+  <slot />
 </header>
 
 <style lang="scss">

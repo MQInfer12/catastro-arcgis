@@ -102,7 +102,6 @@
     }
     
     allNameSubDistrictos.push("Distrito: 1");
-
   });
 
   const handleSearch = () => {

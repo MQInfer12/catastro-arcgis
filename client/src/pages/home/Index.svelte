@@ -2,7 +2,8 @@
   import "@arcgis/core/assets/esri/themes/light/main.css";
   import Map from "@arcgis/core/Map";
   import MapView from "@arcgis/core/views/MapView";
-    import Header from "./components/Header.svelte";
+  import Header from "./components/Header.svelte";
+  import Search from "./components/Search.svelte";
 
   const map = new Map({
     basemap: "gray-vector",
@@ -13,14 +14,15 @@
       container: domNode,
       map: map,
       zoom: 13,
-      
       center: [-66.15697627104832, -17.3938997748886],
     });
   };
 </script>
 
 <main>
-  <Header />
+  <Header>
+    <Search map={map} />
+  </Header>
   <div id="map" use:createMap />
 </main>
 
