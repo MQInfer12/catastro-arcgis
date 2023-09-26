@@ -4,7 +4,6 @@
   import WMSLayer from "@arcgis/core/layers/WMSLayer.js";
   import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
   import "@arcgis/core/assets/esri/themes/light/main.css";
-  import distritosData from "./data/distritos.json";
   import { onMount } from "svelte";
 
   //MATERIAL UI
