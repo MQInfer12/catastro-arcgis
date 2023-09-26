@@ -5,8 +5,9 @@
   import type { DistritoJSON } from './interfaces/DistritoJSON';
   import type { SubdistritoJSON } from './interfaces/SubdistritoJSON';
   import { distritos, subdistritos } from './storage/mapData';
-    import { searchOptions } from './storage/searchOptions';
-    import type { SearchOption } from './interfaces/SearchOption';
+  import { searchOptions } from './storage/searchOptions';
+  import type { SearchOption } from './interfaces/SearchOption';
+  import dataDistritosJSON from './data/distritos.json';
 
   export let url = "";
 
@@ -15,21 +16,34 @@
     const urlSubDistritos = `http://192.168.105.219:6080/arcgis/rest/services/planificacion/limites/MapServer/3/query?where=Nombre+LIKE+%27%25%27&outFields=*&f=geojson`;
 
     const dataDistritos: DistritoJSON = await fetch(urlDistritos).then((res) => res.json());
+    console.log(dataDistritos);
     distritos.set(dataDistritos);
 
     const dataSubdistritos: SubdistritoJSON = await fetch(urlSubDistritos).then((res) => res.json());
     subdistritos.set(dataSubdistritos);
+    const subdistritosNumReg = /Subdistrito: \d+/g;
+    const subdistritosZonaReg = /Zona: [^\n]+/g;
 
     searchOptions.set([
       ...dataDistritos.features.map(feature => ({
         data: {
-          color: "red",
+          color: "var(--green-1)",
           text: feature.properties.comuna,
           little: feature.properties.Nombre,
         },
         type: "distrito",
         value: feature.properties.FID,
         searchValue: feature.properties.Nombre + " " + feature.properties.comuna
+      })),
+      ...dataSubdistritos.features.map(feature => ({
+        data: {
+          color: "var(--blue-1)",
+          text: feature.properties.Nombre.match(subdistritosZonaReg),
+          little: feature.properties.Nombre.match(subdistritosNumReg)
+        },
+        type: "subdistrito",
+        value: feature.properties.OBJECTID,
+        searchValue: feature.properties.Nombre
       }))
     ] as SearchOption[]);
   });

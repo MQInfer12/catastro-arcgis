@@ -1,18 +1,16 @@
 <script lang="ts">
-  import type { Distrito, DistritoJSON } from "../../../interfaces/DistritoJSON";
+  import type { DistritoJSON } from "../../../interfaces/DistritoJSON";
   import { distritos, subdistritos } from "../../../storage/mapData";
   import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
   import Options from "./Options.svelte";
   import type { SubdistritoJSON } from "../../../interfaces/SubdistritoJSON";
-    import type { SearchOption } from "../../../interfaces/SearchOption";
-    import { searchOptions } from "../../../storage/searchOptions";
+  import type { SearchOption } from "../../../interfaces/SearchOption";
+  import { searchOptions } from "../../../storage/searchOptions";
 
   let filter = "";
-  $: active = filter.length > 0;
 
   let distritosData: DistritoJSON;
   let subdistritosData: SubdistritoJSON;
-  let distrito: Distrito | null;
 
   distritos.subscribe(val => {
     if(val) {
@@ -29,27 +27,33 @@
   let geoJsonLayer: any;
 
   const handleSearch = (option: SearchOption) => {
+    filter = "";
     if (geoJsonLayer) {
       map.remove(geoJsonLayer);
     }
-    let filteredFeatures: any[] = [];
+    
+    let showData;
     switch(option.type) {
       case "distrito":
-        filteredFeatures = distritosData.features.filter(
+        const filteredDistritos = distritosData.features.filter(
           feature => feature.properties.FID === option.value
         );
+        showData = {
+          ...distritosData,
+          features: filteredDistritos
+        };
+        break;
+      case "subdistrito":
+        const filteredSubdistritos = subdistritosData.features.filter(
+          feature => feature.properties.OBJECTID === option.value
+        );
+        showData = {
+          ...distritosData,
+          features: filteredSubdistritos
+        };
         break;
     }
-    if (filteredFeatures.length === 0) {
-      distrito = null;
-      alert("No hay resultados");
-      return;
-    }
-    distrito = filteredFeatures[0];
-    const showData = {
-      ...distritosData,
-      features: filteredFeatures,
-    };
+
     const blob = new Blob([JSON.stringify(showData)], {
       type: "application/json",
     });
@@ -64,6 +68,9 @@
   searchOptions.subscribe(val => {
     optionsData = val;
   })
+
+  $: filtered = optionsData.filter(option => option.searchValue.toLocaleLowerCase().includes(filter.toLocaleLowerCase()));
+  $: active = filter.length > 0 && filtered.length !== 0;
 </script>
 
 <div class="container">
@@ -74,7 +81,7 @@
   {#if active}
   <Options 
     handleSearch={handleSearch} 
-    options={optionsData.filter(option => option.searchValue.toLocaleLowerCase().includes(filter.toLocaleLowerCase()))} 
+    options={filtered} 
   />
   {/if}
 </div>
@@ -100,6 +107,7 @@
     padding: 0 44px 0 20px;
     color: var(--gray-400);
     font-size: 16px;
+    transition: border-radius 0.4s;
     &.active {
       border-radius: 20px 20px 0 0;
     }
