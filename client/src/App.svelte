@@ -16,7 +16,6 @@
     const urlSubDistritos = `http://192.168.105.219:6080/arcgis/rest/services/planificacion/limites/MapServer/3/query?where=Nombre+LIKE+%27%25%27&outFields=*&f=geojson`;
 
     const dataDistritos: DistritoJSON = await fetch(urlDistritos).then((res) => res.json());
-    console.log(dataDistritos);
     distritos.set(dataDistritos);
 
     const dataSubdistritos: SubdistritoJSON = await fetch(urlSubDistritos).then((res) => res.json());

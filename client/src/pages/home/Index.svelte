@@ -4,6 +4,10 @@
   import MapView from "@arcgis/core/views/MapView";
   import Header from "./components/Header.svelte";
   import Search from "./components/Search.svelte";
+  import InfoSearch from "./components/InfoSearch.svelte";
+  import type { Distrito } from "../../interfaces/DistritoJSON";
+  import type { Subdistrito } from "../../interfaces/SubdistritoJSON";
+  import type { TypeSearch } from "../../interfaces/SearchOption";
 
   const map = new Map({
     basemap: "gray-vector",
@@ -17,13 +21,50 @@
       center: [-66.15697627104832, -17.3938997748886],
     });
   };
+  // ========== MODAL ==========
+  let openModal = false;
+  const handleChangeStateModal = () => {
+    openModal = !openModal;
+  };
+
+  // ========== DATA ==========
+  let distritosData: Distrito[];
+  let subdistritosData: Subdistrito[];
+  let searchBy: TypeSearch;
+
+  const handleLoadSearchBy = (val: TypeSearch) => {
+    searchBy = val;
+  };
+
+  const handleLoadDistritos = (val: Distrito[]) => {
+    distritosData = val;
+  };
+
+  const handleLoadSubDistritos = (val: Subdistrito[]) => {
+    subdistritosData = val;
+  };
 </script>
 
 <main>
   <Header>
-    <Search map={map} />
+    <Search
+      {map}
+      {handleChangeStateModal}
+      {handleLoadDistritos}
+      {handleLoadSubDistritos}
+      {handleLoadSearchBy}
+    />
   </Header>
   <div id="map" use:createMap />
+
+  {#if openModal == true}
+    <InfoSearch
+      handleFun={handleChangeStateModal}
+      {subdistritosData}
+      {distritosData}
+      {searchBy}
+    />
+  {/if}
 </main>
 
 <style>

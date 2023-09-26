@@ -1,56 +1,74 @@
 <script lang="ts">
-  import type { DistritoJSON } from "../../../interfaces/DistritoJSON";
+  import type {
+    Distrito,
+    DistritoJSON,
+  } from "../../../interfaces/DistritoJSON";
   import { distritos, subdistritos } from "../../../storage/mapData";
   import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
   import Options from "./Options.svelte";
-  import type { SubdistritoJSON } from "../../../interfaces/SubdistritoJSON";
-  import type { SearchOption } from "../../../interfaces/SearchOption";
+  import type {
+    Subdistrito,
+    SubdistritoJSON,
+  } from "../../../interfaces/SubdistritoJSON";
+  import type {
+    SearchOption,
+    TypeSearch,
+  } from "../../../interfaces/SearchOption";
   import { searchOptions } from "../../../storage/searchOptions";
+
+  // ======== PARAMS ========
+  export let handleChangeStateModal: () => void;
+  export let handleLoadDistritos: (val: Distrito[]) => void;
+  export let handleLoadSubDistritos: (val: Subdistrito[]) => void;
+  export let handleLoadSearchBy: (val: TypeSearch) => void;
 
   let filter = "";
 
   let distritosData: DistritoJSON;
   let subdistritosData: SubdistritoJSON;
 
-  distritos.subscribe(val => {
-    if(val) {
+  distritos.subscribe((val) => {
+    if (val) {
       distritosData = val;
     }
   });
-  subdistritos.subscribe(val => {
-    if(val) {
+  subdistritos.subscribe((val) => {
+    if (val) {
       subdistritosData = val;
     }
-  })
+  });
 
   export let map: any;
   let geoJsonLayer: any;
 
   const handleSearch = (option: SearchOption) => {
+    handleLoadSearchBy(option.type);
     filter = "";
     if (geoJsonLayer) {
       map.remove(geoJsonLayer);
     }
-    
+
     let showData;
-    switch(option.type) {
+    switch (option.type) {
       case "distrito":
         const filteredDistritos = distritosData.features.filter(
-          feature => feature.properties.FID === option.value
+          (feature) => feature.properties.FID === option.value
         );
         showData = {
           ...distritosData,
-          features: filteredDistritos
+          features: filteredDistritos,
         };
+        handleLoadDistritos(filteredDistritos);
         break;
       case "subdistrito":
         const filteredSubdistritos = subdistritosData.features.filter(
-          feature => feature.properties.OBJECTID === option.value
+          (feature) => feature.properties.OBJECTID === option.value
         );
         showData = {
           ...distritosData,
-          features: filteredSubdistritos
+          features: filteredSubdistritos,
         };
+        handleLoadSubDistritos(filteredSubdistritos);
         break;
     }
 
@@ -62,27 +80,27 @@
       url: url,
     });
     map.add(geoJsonLayer);
+    handleChangeStateModal();
   };
 
   let optionsData: SearchOption[];
-  searchOptions.subscribe(val => {
+  searchOptions.subscribe((val) => {
     optionsData = val;
-  })
+  });
 
-  $: filtered = optionsData.filter(option => option.searchValue.toLocaleLowerCase().includes(filter.toLocaleLowerCase()));
+  $: filtered = optionsData.filter((option) =>
+    option.searchValue.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+  );
   $: active = filter.length > 0 && filtered.length !== 0;
 </script>
 
 <div class="container">
   <div class="input-container">
-    <input bind:value={filter} type="text" class={active ? "active" : ""}>
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <input bind:value={filter} type="text" class={active ? "active" : ""} />
+    <i class="fa-solid fa-magnifying-glass" />
   </div>
   {#if active}
-  <Options 
-    handleSearch={handleSearch} 
-    options={filtered} 
-  />
+    <Options {handleSearch} options={filtered} />
   {/if}
 </div>
 
