@@ -40,11 +40,9 @@
   .modal {
     display: grid;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    top: 60%;
+    left: 70%;
+    background-color: rgba(0, 0, 0, 0.1);
     z-index: 1;
     justify-content: center;
     align-items: center;
