@@ -62,7 +62,11 @@
 
 <div class="container">   
   <button on:click={() => active = !active}>
+    {#if active}
+    <i class="fa-solid fa-xmark"></i>
+    {:else}
     <i class="fa-solid fa-layer-group"></i>
+    {/if}
   </button>
   <div class="layers-container">
     <div style={`transform: translateY(${active ? "0" : "-100%"})`}>
@@ -91,6 +95,16 @@
     & > i {
       color: var(--gray-400);
       font-size: 16px;
+      animation: appearIcon 0.3s;
+
+      @keyframes appearIcon {
+        from {
+          transform: rotate(360deg);
+        }
+        to {
+          opacity: rotate(0);
+        }
+      }
     }
   }
   .layers-container {

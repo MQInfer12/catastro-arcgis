@@ -24,26 +24,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
     & > .bg {
       position: absolute;
       inset: 0;
       border-radius: 50%;
       opacity: 0.4;
     }
-
     & > i {
       position: absolute;
       color: var(--white);
       font-size: 20px;
+      animation: appearActive 0.3s;
     }
-
     & > img {
       width: 100%;
       height: 100%;
       border-radius: 50%;
     }
-
     & > p {
       overflow: hidden;
       width: 100%;
@@ -53,5 +50,14 @@
       color: var(--white);
       border-radius: 7px;
     }
+
+    @keyframes appearActive {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
   }
 </style>
