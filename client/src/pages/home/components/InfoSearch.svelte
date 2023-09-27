@@ -44,13 +44,22 @@
   .modal {
     display: flex;
     position: fixed;
-    bottom: 0;
+    bottom: 0px;
     left: 0%;
     z-index: 1;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 50%;
+  }
+
+  @keyframes transitionMove {
+    0% {
+      transform: translateY(250px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
   }
 
   /* Style for the modal content */
@@ -65,6 +74,7 @@
     min-height: 100%;
     display: grid;
     place-content: center;
+    animation: transitionMove 1s;
   }
 
   /* Style for the close button */
@@ -81,6 +91,5 @@
     width: 50px;
     border-radius: 10px;
     height: 10px;
-    
   }
 </style>
