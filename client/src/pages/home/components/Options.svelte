@@ -2,7 +2,7 @@
   import type { SearchOption } from "../../../interfaces/SearchOption";
 
   export let options: SearchOption[];
-  export let handleSearch: (option: SearchOption) => any;
+  export let handleSearch: (option: SearchOption) => void;
   export let active: boolean;
 </script>
 
