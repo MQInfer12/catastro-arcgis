@@ -8,6 +8,8 @@
   import type { Distrito } from "../../interfaces/DistritoJSON";
   import type { Subdistrito } from "../../interfaces/SubdistritoJSON";
   import type { TypeSearch } from "../../interfaces/SearchOption";
+    import BottomNav from "./components/BottomNav.svelte";
+    import Layers from "./components/Layers.svelte";
 
   const map = new Map({
     basemap: "gray-vector",
@@ -47,16 +49,19 @@
 
 <main>
   <Header>
-    <Search
-      {map}
-      {handleChangeStateModal}
-      {handleLoadDistritos}
-      {handleLoadSubDistritos}
-      {handleLoadSearchBy}
-    />
+    <div class="controls">
+      <Search
+        {map}
+        {handleChangeStateModal}
+        {handleLoadDistritos}
+        {handleLoadSubDistritos}
+        {handleLoadSearchBy}
+      />
+      <Layers map={map} />
+    </div>
   </Header>
   <div id="map" use:createMap />
-
+  <BottomNav />
   {#if openModal == true}
     <InfoSearch
       handleFun={handleChangeStateModal}
@@ -76,5 +81,10 @@
   #map {
     height: 100%;
     width: 100%;
+  }
+  .controls {
+    width: 100%;
+    display: flex;
+    gap: 8px;
   }
 </style>

@@ -1,7 +1,13 @@
+@font-face {
+  font-family: Arciform;
+  src: url("./assets/fonts/Arciform.otf") format("truetype");
+}
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  font-family: Arciform;
   --white: #FFFFFF;
   --gray-50: #F0F1F3;  
   --gray-100: #E6E8EB;
