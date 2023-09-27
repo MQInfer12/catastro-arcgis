@@ -3,8 +3,10 @@
 
   export let options: SearchOption[];
   export let handleSearch: (option: SearchOption) => any;
+  export let active: boolean;
 </script>
 
+{#if active}
 <div class="container">
   {#each options as option}
     <button on:click={() => handleSearch(option)} class="row">
@@ -16,6 +18,7 @@
     </button>
   {/each}
 </div>
+{/if}
 
 <style lang="scss">
   .container {

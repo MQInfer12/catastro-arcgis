@@ -99,9 +99,7 @@
     <input bind:value={filter} type="text" class={active ? "active" : ""} />
     <i class="fa-solid fa-magnifying-glass" />
   </div>
-  {#if active}
-    <Options {handleSearch} options={filtered} />
-  {/if}
+  <Options {active} {handleSearch} options={filtered} />
 </div>
 
 <style lang="scss">

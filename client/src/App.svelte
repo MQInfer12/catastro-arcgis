@@ -20,7 +20,7 @@
 
     const dataSubdistritos: SubdistritoJSON = await fetch(urlSubDistritos).then((res) => res.json());
     subdistritos.set(dataSubdistritos);
-    const subdistritosNumReg = /Subdistrito: \d+/g;
+    const subdistritosNumReg = /SubDistrito: \d+/g;
     const subdistritosZonaReg = /Zona: [^\n]+/g;
 
     searchOptions.set([
