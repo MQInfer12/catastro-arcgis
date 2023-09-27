@@ -6,6 +6,7 @@
   import { distritos, subdistritos } from "../../../storage/mapData";
   import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
   import Options from "./Options.svelte";
+  import Point from "@arcgis/core/geometry/Point.js";
   import type {
     Subdistrito,
     SubdistritoJSON,
@@ -15,6 +16,8 @@
     TypeSearch,
   } from "../../../interfaces/SearchOption";
   import { searchOptions } from "../../../storage/searchOptions";
+  import MapView from "@arcgis/core/views/MapView";
+  import Map from "@arcgis/core/Map";
 
   // ======== PARAMS ========
   export let handleChangeStateModal: () => void;
@@ -38,8 +41,9 @@
     }
   });
 
-  export let map: any;
-  let geoJsonLayer: any;
+  export let map: Map;
+  export let view: MapView;
+  let geoJsonLayer: GeoJSONLayer;
 
   const handleSearch = (option: SearchOption) => {
     handleLoadSearchBy(option.type);
@@ -80,6 +84,12 @@
       url: url,
     });
     map.add(geoJsonLayer);
+
+    geoJsonLayer.when(() => {
+      view.extent = geoJsonLayer.fullExtent;
+      view.zoom = 12;
+    })
+
     handleChangeStateModal();
   };
 

@@ -14,9 +14,10 @@
   const map = new Map({
     basemap: "gray-vector",
   });
+  let view: MapView;
 
   const createMap = (domNode: string | HTMLDivElement | undefined) => {
-    const view = new MapView({
+    view = new MapView({
       container: domNode,
       map: map,
       zoom: 13,
@@ -51,6 +52,7 @@
   <Header>
     <div class="controls">
       <Search
+        {view}
         {map}
         {handleChangeStateModal}
         {handleLoadDistritos}
