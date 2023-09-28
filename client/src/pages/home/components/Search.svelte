@@ -68,10 +68,10 @@
         const filteredSubdistritos = subdistritosData.features.filter(
           (feature) => feature.properties.OBJECTID === option.value
         );
-        showData = {
+        /* showData = {
           ...distritosData,
           features: filteredSubdistritos,
-        };
+        }; */
         handleLoadSubDistritos(filteredSubdistritos);
         break;
     }
@@ -86,8 +86,11 @@
     map.add(geoJsonLayer);
 
     geoJsonLayer.when(() => {
-      view.extent = geoJsonLayer.fullExtent;
-      view.zoom = 12;
+      view.goTo({
+        target: geoJsonLayer.fullExtent,
+        duration: 2000,
+        easing: "ease"
+      })
     })
 
     handleChangeStateModal();
