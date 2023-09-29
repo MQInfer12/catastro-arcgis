@@ -1,18 +1,19 @@
 <script lang="ts">
+  import type { SearchOption } from "../../../interfaces/SearchOption";
+
   export var data: any;
-  export var type: string;
-  export var color: "green" | "blue" | "purple" | "red" | "yellow";
+  export var searchBy: SearchOption;
 </script>
 
-<h2 style={`color: var(--${color}-2);`}>Detalles de tu busqueda</h2>
+<h2 style={`color: var(--${searchBy.data.color}-2);`}>Detalles de tu busqueda</h2>
 <table>
   <thead>
     <tr>
       <th 
       class="th-title"
-      style={`background-color: var(--${color}-1); border: 1px solid var(--${color}-2);`}
+      style={`background-color: var(--${searchBy.data.color}-1); border: 1px solid var(--${searchBy.data.color}-2);`}
         colspan="2"
-      >{type}</th>
+      >{searchBy.type}</th>
     </tr>
   </thead>
   <tbody>
@@ -21,7 +22,7 @@
         <tr>
           <th 
             class="th-table"
-            style={`background-color: var(--${color}-1); border: 1px solid var(--${color}-2);`}
+            style={`background-color: var(--${searchBy.data.color}-1); border: 1px solid var(--${searchBy.data.color}-2);`}
           >
             {#if key === "Shape_Area"}
               Área
@@ -32,7 +33,7 @@
             {/if}
           </th>
           <td
-            style={`border: 1px solid var(--${color}-2);`}
+            style={`border: 1px solid var(--${searchBy.data.color}-2);`}
           >{data[key]}</td>
         </tr>
       {/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Distrito } from "../../../interfaces/DistritoJSON";
-  import type { TypeSearch } from "../../../interfaces/SearchOption";
+  import type { SearchOption } from "../../../interfaces/SearchOption";
   import type { Subdistrito } from "../../../interfaces/SubdistritoJSON";
   import Table from "./Table.svelte";
 
@@ -8,7 +8,7 @@
   export let handleFun: () => void;
   export let distritosData: Distrito[];
   export let subdistritosData: Subdistrito[];
-  export let searchBy: TypeSearch;
+  export let searchBy: SearchOption;
 </script>
 
 <div id="myModal" class="modal">
@@ -16,17 +16,15 @@
     <div>&nbsp;</div>
   </button>
   <div class="modal-content">
-    {#if searchBy == "distrito"}
+    {#if searchBy.type == "distrito"}
       <Table 
-        color="green"
-        type={searchBy}
+        {searchBy}
         data={distritosData[0].properties} 
       />
     {/if}
-    {#if searchBy == "subdistrito"}
+    {#if searchBy.type == "subdistrito"}
       <Table 
-        color="blue"
-        type={searchBy}
+        {searchBy}
         data={subdistritosData[0].properties} 
       />
     {/if}

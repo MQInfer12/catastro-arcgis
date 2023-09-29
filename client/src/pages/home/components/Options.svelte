@@ -14,7 +14,7 @@
         <small>{option.data.little}</small>
         <p>{option.data.text}</p>
       </div>
-      <p style={`background-color: ${option.data.color}`}>{option.type}</p>
+      <p style={`background-color: var(--${option.data.color}-1)`}>{option.type}</p>
     </button>
   {/each}
 </div>

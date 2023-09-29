@@ -29,7 +29,7 @@
     searchOptions.set([
       ...dataDistritos.features.map(feature => ({
         data: {
-          color: "var(--green-1)",
+          color: "green",
           text: feature.properties.comuna,
           little: feature.properties.Nombre,
         },
@@ -39,7 +39,7 @@
       })),
       ...dataSubdistritos.features.map(feature => ({
         data: {
-          color: "var(--blue-1)",
+          color: "blue",
           text: feature.properties.Nombre.match(subdistritosZonaReg),
           little: feature.properties.Nombre.match(subdistritosNumReg)
         },

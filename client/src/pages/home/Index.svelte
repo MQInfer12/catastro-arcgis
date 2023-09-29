@@ -1,4 +1,6 @@
 <script lang="ts">
+    import IconButton from "./components/IconButton.svelte";
+
   import "@arcgis/core/assets/esri/themes/light/main.css";
   import Map from "@arcgis/core/Map";
   import MapView from "@arcgis/core/views/MapView";
@@ -7,9 +9,10 @@
   import InfoSearch from "./components/InfoSearch.svelte";
   import type { Distrito } from "../../interfaces/DistritoJSON";
   import type { Subdistrito } from "../../interfaces/SubdistritoJSON";
-  import type { TypeSearch } from "../../interfaces/SearchOption";
-    import BottomNav from "./components/BottomNav.svelte";
-    import Layers from "./components/Layers.svelte";
+  import type { SearchOption, TypeSearch } from "../../interfaces/SearchOption";
+  import BottomNav from "./components/BottomNav.svelte";
+  import Layers from "./components/Layers.svelte";
+    import Views from "./components/Views.svelte";
 
   const map = new Map({
     basemap: "gray-vector",
@@ -33,9 +36,9 @@
   // ========== DATA ==========
   let distritosData: Distrito[];
   let subdistritosData: Subdistrito[];
-  let searchBy: TypeSearch;
+  let searchBy: SearchOption;
 
-  const handleLoadSearchBy = (val: TypeSearch) => {
+  const handleLoadSearchBy = (val: SearchOption) => {
     searchBy = val;
   };
 
@@ -46,11 +49,24 @@
   const handleLoadSubDistritos = (val: Subdistrito[]) => {
     subdistritosData = val;
   };
+
+  let openViews = false;
+  const handleOpenViews = () => {
+    map.removeAll();
+    openViews = !openViews;
+  }
 </script>
 
 <main>
   <Header>
     <div class="controls">
+      <Views 
+        open={openViews}
+        handleOpen={handleOpenViews}
+        {map}
+        {view}
+      />
+      {#if !openViews}
       <Search
         {view}
         {map}
@@ -60,6 +76,7 @@
         {handleLoadSearchBy}
       />
       <Layers map={map} />
+      {/if}
     </div>
   </Header>
   <div id="map" use:createMap />
