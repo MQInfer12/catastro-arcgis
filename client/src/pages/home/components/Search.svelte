@@ -6,7 +6,6 @@
   import { distritos, subdistritos } from "../../../storage/mapData";
   import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
   import Options from "./Options.svelte";
-  import Point from "@arcgis/core/geometry/Point.js";
   import type {
     Subdistrito,
     SubdistritoJSON,
