@@ -2,7 +2,7 @@
   import type { Distrito } from "../../../interfaces/DistritoJSON";
   import type { TypeSearch } from "../../../interfaces/SearchOption";
   import type { Subdistrito } from "../../../interfaces/SubdistritoJSON";
-  import { distritos, subdistritos } from "../../../storage/mapData";
+  import Table from "./Table.svelte";
 
   // ======== PARAMS ========
   export let handleFun: () => void;
@@ -12,45 +12,40 @@
 </script>
 
 <div id="myModal" class="modal">
+  <button class="close-button" on:click={handleFun}>
+    <div>&nbsp;</div>
+  </button>
   <div class="modal-content">
-    <div class="close-button" on:click={handleFun}>
-      <div>&nbsp;</div>
-    </div>
-    <div>
-      <h2>Datos de tu busqueda</h2>
-      {#if searchBy == "distrito"}
-        <div>
-          <p>FID: {distritosData[0].properties.FID}</p>
-          <p>Nombre: {distritosData[0].properties.Nombre}</p>
-          <p>Distrito: {distritosData[0].properties.distrito}</p>
-          <p>Comuna: {distritosData[0].properties.comuna}</p>
-          <p>Área: {distritosData[0].properties.Shape_Area}</p>
-        </div>
-      {/if}
-
-      {#if searchBy == "subdistrito"}
-        <div>
-          <p><b>Nombre:</b> {subdistritosData[0].properties.Nombre}</p>
-          <p><b>ObjectId:</b> {subdistritosData[0].properties.OBJECTID}</p>
-          <p><b>Longitud:</b> {subdistritosData[0].properties.Shape_Length}</p>
-          <p><b>Área:</b> {subdistritosData[0].properties.Shape_Area}</p>
-        </div>
-      {/if}
-    </div>
+    {#if searchBy == "distrito"}
+      <Table 
+        color="green"
+        type={searchBy}
+        data={distritosData[0].properties} 
+      />
+    {/if}
+    {#if searchBy == "subdistrito"}
+      <Table 
+        color="blue"
+        type={searchBy}
+        data={subdistritosData[0].properties} 
+      />
+    {/if}
   </div>
 </div>
 
-<style>
+<style lang="scss">
   .modal {
     display: flex;
     position: fixed;
     bottom: 0px;
     left: 0%;
     z-index: 1;
-    justify-content: center;
-    align-items: center;
     width: 100%;
-    height: 50%;
+    align-items: center;
+    justify-content: center;
+    height: 30%;
+    animation: transitionMove 1s;
+    isolation: isolate;
   }
 
   @keyframes transitionMove {
@@ -64,7 +59,7 @@
 
   /* Style for the modal content */
   .modal-content {
-    background-color: #fff;
+    background-color: var(--gray-50);
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -72,9 +67,6 @@
     position: relative;
     min-width: 100%;
     min-height: 100%;
-    display: grid;
-    place-content: center;
-    animation: transitionMove 1s;
   }
 
   /* Style for the close button */
@@ -85,11 +77,15 @@
     display: flex;
     justify-content: center;
     width: 100%;
+    z-index: 1;
+    border: none;
+    background-color: transparent;
   }
+
   .close-button div {
-    background-color: #7c7c7c;
+    background-color: var(--gray-300);
     width: 50px;
     border-radius: 10px;
-    height: 10px;
+    height: 5px;
   }
 </style>

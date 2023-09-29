@@ -8,6 +8,7 @@
   import { searchOptions } from './storage/searchOptions';
   import type { SearchOption } from './interfaces/SearchOption';
   import dataDistritosJSON from './data/distritos.json';
+  import dataSubdistritosJSON from './data/subdistritos.json';
 
   export let url = "";
 
@@ -15,10 +16,12 @@
     const urlDistritos = `http://192.168.105.219:6080/arcgis/rest/services/planificacion/limites/MapServer/1/query?where=Nombre+LIKE+%27%25%27&outFields=*&f=geojson`;
     const urlSubDistritos = `http://192.168.105.219:6080/arcgis/rest/services/planificacion/limites/MapServer/3/query?where=Nombre+LIKE+%27%25%27&outFields=*&f=geojson`;
 
-    const dataDistritos: DistritoJSON = await fetch(urlDistritos).then((res) => res.json());
+    const dataDistritos: DistritoJSON = dataDistritosJSON;
+    const dataSubdistritos: SubdistritoJSON = dataSubdistritosJSON;
+    /* const dataDistritos: DistritoJSON = await fetch(urlDistritos).then((res) => res.json()); */
     distritos.set(dataDistritos);
 
-    const dataSubdistritos: SubdistritoJSON = await fetch(urlSubDistritos).then((res) => res.json());
+    /* const dataSubdistritos: SubdistritoJSON = await fetch(urlSubDistritos).then((res) => res.json()); */
     subdistritos.set(dataSubdistritos);
     const subdistritosNumReg = /SubDistrito: \d+/g;
     const subdistritosZonaReg = /Zona: [^\n]+/g;
