@@ -17,6 +17,7 @@
   import { searchOptions } from "../../../storage/searchOptions";
   import MapView from "@arcgis/core/views/MapView";
   import Map from "@arcgis/core/Map";
+    import { colorToSymbol } from "../../../utilities/colorToSymbol";
 
   // ======== PARAMS ========
   export let handleChangeStateModal: () => void;
@@ -84,6 +85,11 @@
     const url = URL.createObjectURL(blob);
     geoJsonLayer = new GeoJSONLayer({
       url: url,
+      renderer: {
+        //@ts-ignore
+        type: "simple",
+        symbol: colorToSymbol(option.data.color, 0.4)
+      }
     });
     map.add(geoJsonLayer);
 
