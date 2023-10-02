@@ -1,5 +1,5 @@
 <script lang="ts">
-    import IconButton from "./components/IconButton.svelte";
+  import IconButton from "./components/IconButton.svelte";
 
   import "@arcgis/core/assets/esri/themes/light/main.css";
   import Map from "@arcgis/core/Map";
@@ -12,7 +12,7 @@
   import type { SearchOption, TypeSearch } from "../../interfaces/SearchOption";
   import BottomNav from "./components/BottomNav.svelte";
   import Layers from "./components/Layers.svelte";
-    import Views from "./components/Views.svelte";
+  import Views from "./components/Views.svelte";
 
   const map = new Map({
     basemap: "gray-vector",
@@ -29,8 +29,10 @@
   };
   // ========== MODAL ==========
   let openModal = false;
-  const handleChangeStateModal = () => {
-    openModal = !openModal;
+  const handleChangeStateModal = (close = false) => {
+    if (!openModal) openModal = !openModal;
+    if (openModal) openModal = true;
+    if (close) openModal = false;
   };
 
   // ========== DATA ==========
@@ -54,28 +56,23 @@
   const handleOpenViews = () => {
     map.removeAll();
     openViews = !openViews;
-  }
+  };
 </script>
 
 <main>
   <Header>
     <div class="controls">
-      <Views 
-        open={openViews}
-        handleOpen={handleOpenViews}
-        {map}
-        {view}
-      />
+      <Views open={openViews} handleOpen={handleOpenViews} {map} {view} />
       {#if !openViews}
-      <Search
-        {view}
-        {map}
-        {handleChangeStateModal}
-        {handleLoadDistritos}
-        {handleLoadSubDistritos}
-        {handleLoadSearchBy}
-      />
-      <Layers map={map} />
+        <Search
+          {view}
+          {map}
+          {handleChangeStateModal}
+          {handleLoadDistritos}
+          {handleLoadSubDistritos}
+          {handleLoadSearchBy}
+        />
+        <Layers {map} />
       {/if}
     </div>
   </Header>
