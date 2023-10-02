@@ -5,28 +5,22 @@
   import Table from "./Table.svelte";
 
   // ======== PARAMS ========
-  export let handleFun: () => void;
+  export let handleFun: (close?: boolean) => void;
   export let distritosData: Distrito[];
   export let subdistritosData: Subdistrito[];
   export let searchBy: SearchOption;
 </script>
 
 <div id="myModal" class="modal">
-  <button class="close-button" on:click={handleFun}>
+  <button class="close-button" on:click={() => handleFun(true)}>
     <div>&nbsp;</div>
   </button>
   <div class="modal-content">
     {#if searchBy.type == "distrito"}
-      <Table 
-        {searchBy}
-        data={distritosData[0].properties} 
-      />
+      <Table {searchBy} data={distritosData[0].properties} />
     {/if}
     {#if searchBy.type == "subdistrito"}
-      <Table 
-        {searchBy}
-        data={subdistritosData[0].properties} 
-      />
+      <Table {searchBy} data={subdistritosData[0].properties} />
     {/if}
   </div>
 </div>
