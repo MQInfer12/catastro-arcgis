@@ -7,6 +7,7 @@
   import type { TypeColor } from "../../../interfaces/SearchOption";
   import Graphic from "@arcgis/core/Graphic.js";
   import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer.js";
+  import { colorToSymbol } from "../../../utilities/colorToSymbol";
 
   export let handleOpen: () => any
   export let open: boolean
@@ -23,7 +24,29 @@
   let geoJsonLayer: GeoJSONLayer;
   let graphicsLayer: GraphicsLayer;
   let active: "distritos" | null = null;
-  
+  let addedClickEvent = false;
+
+  const clickHandler = (e: any, color: TypeColor) => {
+    view.hitTest(e).then(res => {
+      if(res.results.length > 0) {
+        //@ts-ignore
+        const graphic = res.results[0].graphic;
+        map.remove(graphicsLayer);
+        graphicsLayer = new GraphicsLayer({
+          graphics: [new Graphic({
+            geometry: graphic.geometry,
+            symbol: colorToSymbol(color),
+            attributes: graphic.attributes
+          })]
+        });
+        map.add(graphicsLayer);
+        const FID = graphic.attributes.FID;
+        const distrito = distritosData.features.find(feature => feature.properties.FID === FID);
+        console.log(distrito);
+      }
+    })
+  }
+
   const handleDistritos = () => {
     map.removeAll();
     active = "distritos";
@@ -32,29 +55,12 @@
     });
     const url = URL.createObjectURL(blob);
 
-    const cssColor1 = getComputedStyle(document.documentElement).getPropertyValue('--green-1');
-    const hexColor1 = cssColor1.replace('#', '');
-    const r1 = parseInt(hexColor1.slice(0, 2), 16);
-    const g1 = parseInt(hexColor1.slice(2, 4), 16);
-    const b1 = parseInt(hexColor1.slice(4, 6), 16);
-    const cssColor2 = getComputedStyle(document.documentElement).getPropertyValue('--green-2');
-    const hexColor2 = cssColor2.replace('#', '');
-    const r2 = parseInt(hexColor2.slice(0, 2), 16);
-    const g2 = parseInt(hexColor2.slice(2, 4), 16);
-    const b2 = parseInt(hexColor2.slice(4, 6), 16);
     geoJsonLayer = new GeoJSONLayer({
       url: url,
       renderer: {
         //@ts-ignore
         type: "simple",
-        symbol: {
-          type: "simple-fill",
-          color: [r1, g1, b1, 0.4],
-          outline: {
-            color: [r2, g2, b2, 0.6],
-            width: 1
-          }
-        }
+        symbol: colorToSymbol("green", 0.4)
       }
     });
     map.add(geoJsonLayer);
@@ -67,34 +73,11 @@
       })
     })
 
-    view.on("click", (e) => {
-      view.hitTest(e).then(res => {
-        if(res.results.length > 0) {
-          //@ts-ignore
-          const graphic = res.results[0].graphic;
-          const newSymbol = {
-            type: "simple-fill",
-            color: [r1, g1, b1, 1],
-            outline: {
-              color: [r2, g2, b2, 1],
-              width: 1
-            }
-          }
-          map.remove(graphicsLayer);
-          graphicsLayer = new GraphicsLayer({
-            graphics: [new Graphic({
-              geometry: graphic.geometry,
-              symbol: newSymbol,
-              attributes: graphic.attributes
-            })]
-          });
-          map.add(graphicsLayer);
-          const FID = graphic.attributes.FID;
-          const distrito = distritosData.features.find(feature => feature.properties.FID === FID);
-          console.log(distrito);
-        }
-      })
-    });
+    console.log(addedClickEvent);
+    if(!addedClickEvent) {
+      view.on("click", (e) => clickHandler(e, "green"));
+      addedClickEvent = true;
+    }
   }
 
   interface DataButton {
