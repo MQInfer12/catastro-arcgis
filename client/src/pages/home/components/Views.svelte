@@ -1,6 +1,6 @@
 <script lang="ts">
   import Map from "@arcgis/core/Map";
-  import { distritos } from "../../../storage/mapData";
+  import { comunas, distritos } from "../../../storage/mapData";
   import type {
     Distrito,
     DistritoJSON,
@@ -15,6 +15,7 @@
   import Graphic from "@arcgis/core/Graphic.js";
   import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer.js";
   import { colorToSymbol } from "../../../utilities/colorToSymbol";
+  import type { ComunaJSON } from "../../../interfaces/ComunaJSON";
 
   export let handleOpen: () => any;
   export let open: boolean;
@@ -30,10 +31,26 @@
       distritosData = val;
     }
   });
+  let comunasData: ComunaJSON;
+  comunas.subscribe((val) => {
+    if (val) {
+      comunasData = val;
+    }
+  });
 
   let geoJsonLayer: GeoJSONLayer;
   let graphicsLayer: GraphicsLayer;
-  let active: "distritos" | null = null;
+
+  interface Active {
+    type: ActiveType,
+    color: TypeColor | null
+  }
+  type ActiveType = "Distritos" | "Comunas" | null
+
+  let active: Active = {
+    type: null,
+    color: null
+  };
   let addedClickEvent = false;
 
   const clickHandler = (e: any, color: TypeColor) => {
@@ -50,20 +67,28 @@
           })]
         });
         map.add(graphicsLayer);
-        const FID = graphic.attributes.FID;
+        const FID = graphic.attributes.FID || graphic.attributes.OBJECTID;
         const distrito = distritosData.features.find(feature => feature.properties.FID === FID);
         if (distrito) {
-            handleloadDistrisoDataClick(distrito);
-            handleSearchByTypeVar("distritoByClick");
-            handleChangeStateModal();
-          }
+          handleloadDistrisoDataClick(distrito);
+          handleSearchByTypeVar("distritoByClick");
+          handleChangeStateModal();
+        }
       }
     })
   }
+  
+  interface DataButton {
+    text: ActiveType;
+    color: TypeColor;
+  }
 
-  const handleDistritos = () => {
+  const handleDistritos = (dataButton: DataButton) => {
     map.removeAll();
-    active = "distritos";
+    active = {
+      type: dataButton.text,
+      color: dataButton.color
+    };
     const blob = new Blob([JSON.stringify(distritosData)], {
       type: "application/json",
     });
@@ -92,21 +117,18 @@
     }
   }
 
-  interface DataButton {
-    text: string;
-    handleClick: () => any;
-    color: TypeColor;
-  }
-
   const dataButtons: DataButton[] = [
     {
       text: "Distritos",
-      handleClick: handleDistritos,
       color: "green",
+    },
+    {
+      text: "Comunas",
+      color: "red"
     },
   ];
 
-  $: active = open ? active : null;
+  $: active.type = open ? active.type : null;
 </script>
 
 <div class="container" style={`width: ${open ? "100%" : "auto"}`}>
@@ -121,10 +143,10 @@
     <div class="buttons">
       {#each dataButtons as button}
         <button
-          on:click={button.handleClick}
+          on:click={() => handleDistritos(button)}
           class="view-button"
           style={`background-color: var(--${button.color}-1); opacity: ${
-            active === "distritos" ? "1" : "0.6"
+            active.type === button.text ? "1" : "0.6"
           };`}>{button.text}</button
         >
       {/each}
@@ -169,6 +191,8 @@
     width: 100%;
     animation: fromLeft 0.3s;
     padding-left: 48px;
+    display: flex;
+    gap: 8px;
 
     @keyframes fromLeft {
       from {

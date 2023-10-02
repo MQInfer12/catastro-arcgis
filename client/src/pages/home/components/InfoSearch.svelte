@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { Comuna } from "../../../interfaces/ComunaJSON";
   import type { Distrito } from "../../../interfaces/DistritoJSON";
   import type {
     SearchOption,
@@ -11,11 +12,10 @@
   export let handleFun: (close?: boolean) => void;
   export let distritosData: Distrito[];
   export let subdistritosData: Subdistrito[];
+  export let comunasData: Comuna[];
   export let searchBy: SearchOption;
   export let searchByTypeVar: TypeSearch;
   export let distritosDataClick: Distrito;
-
-  console.log(distritosDataClick)
 </script>
 
 <div id="myModal" class="modal">
@@ -31,6 +31,9 @@
     {/if}
     {#if searchByTypeVar == "distritoByClick"}
       <Table {searchBy} data={distritosDataClick.properties} />
+    {/if}
+    {#if searchByTypeVar == "comuna"}
+      <Table {searchBy} data={comunasData[0].properties} />
     {/if}
   </div>
 </div>

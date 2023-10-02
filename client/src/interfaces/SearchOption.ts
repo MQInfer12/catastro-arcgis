@@ -9,6 +9,6 @@ export interface SearchOption {
   };
 }
 
-export type TypeSearch = "distrito" | "subdistrito" | "distritoByClick";
+export type TypeSearch = "distrito" | "subdistrito" | "distritoByClick" | "comuna";
 
 export type TypeColor = "yellow" | "red" | "purple" | "green" | "blue";

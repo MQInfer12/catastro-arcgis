@@ -3,7 +3,7 @@
     Distrito,
     DistritoJSON,
   } from "../../../interfaces/DistritoJSON";
-  import { distritos, subdistritos } from "../../../storage/mapData";
+  import { comunas, distritos, subdistritos } from "../../../storage/mapData";
   import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
   import Options from "./Options.svelte";
   import type {
@@ -18,11 +18,13 @@
   import MapView from "@arcgis/core/views/MapView";
   import Map from "@arcgis/core/Map";
     import { colorToSymbol } from "../../../utilities/colorToSymbol";
+    import type { Comuna, ComunaJSON } from "../../../interfaces/ComunaJSON";
 
   // ======== PARAMS ========
   export let handleChangeStateModal: () => void;
   export let handleLoadDistritos: (val: Distrito[]) => void;
   export let handleLoadSubDistritos: (val: Subdistrito[]) => void;
+  export let handleLoadComunas: (val: Comuna[]) => void;
   export let handleLoadSearchBy: (val: SearchOption) => void;
   export let handleSearchByTypeVar: (val: TypeSearch) => void;
 
@@ -30,6 +32,7 @@
 
   let distritosData: DistritoJSON;
   let subdistritosData: SubdistritoJSON;
+  let comunasData: ComunaJSON;
 
   distritos.subscribe((val) => {
     if (val) {
@@ -39,6 +42,11 @@
   subdistritos.subscribe((val) => {
     if (val) {
       subdistritosData = val;
+    }
+  });
+  comunas.subscribe((val) => {
+    if (val) {
+      comunasData = val;
     }
   });
 
@@ -76,6 +84,16 @@
           features: filteredSubdistritos,
         }; */
         handleLoadSubDistritos(filteredSubdistritos);
+        break;
+      case "comuna":
+        const filteredComunas = comunasData.features.filter(
+          (feature) => feature.properties.OBJECTID === option.value
+        );
+        showData = {
+          ...comunasData,
+          features: filteredComunas,
+        };
+        handleLoadComunas(filteredComunas);
         break;
     }
 
@@ -117,7 +135,7 @@
 
 <div class="container">
   <div class="input-container">
-    <input bind:value={filter} type="text" class={active ? "active" : ""} />
+    <input bind:value={filter} placeholder="Buscar" type="text" class={active ? "active" : ""} />
     <i class="fa-solid fa-magnifying-glass" />
   </div>
   <Options {active} {handleSearch} options={filtered} />
@@ -147,6 +165,9 @@
     transition: border-radius 0.4s;
     &.active {
       border-radius: 20px 20px 0 0;
+    }
+    &::placeholder {
+      color: var(--gray-200);
     }
   }
   i {

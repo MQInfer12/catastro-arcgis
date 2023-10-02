@@ -13,6 +13,7 @@
   import BottomNav from "./components/BottomNav.svelte";
   import Layers from "./components/Layers.svelte";
   import Views from "./components/Views.svelte";
+    import type { Comuna } from "../../interfaces/ComunaJSON";
 
   const map = new Map({
     basemap: "gray-vector",
@@ -38,6 +39,7 @@
   // ========== DATA ==========
   let distritosData: Distrito[];
   let subdistritosData: Subdistrito[];
+  let comunasData: Comuna[];
   let searchBy: SearchOption;
   let searchByTypeVar: TypeSearch;
   let distritosDataClick: Distrito;
@@ -60,6 +62,10 @@
 
   const handleLoadSubDistritos = (val: Subdistrito[]) => {
     subdistritosData = val;
+  };
+
+  const handleLoadComunas = (val: Comuna[]) => {
+    comunasData = val;
   };
 
   let openViews = false;
@@ -88,6 +94,7 @@
           {handleChangeStateModal}
           {handleLoadDistritos}
           {handleLoadSubDistritos}
+          {handleLoadComunas}
           {handleLoadSearchBy}
           {handleSearchByTypeVar}
         />
@@ -102,6 +109,7 @@
       handleFun={handleChangeStateModal}
       {subdistritosData}
       {distritosData}
+      {comunasData}
       {searchBy}
       {distritosDataClick}
       {searchByTypeVar}
