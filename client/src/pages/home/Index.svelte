@@ -39,6 +39,16 @@
   let distritosData: Distrito[];
   let subdistritosData: Subdistrito[];
   let searchBy: SearchOption;
+  let searchByTypeVar: TypeSearch;
+  let distritosDataClick: Distrito;
+
+  const handleSearchByTypeVar = (val: TypeSearch) => {
+    searchByTypeVar = val;
+  };
+
+  const handleloadDistrisoDataClick = (val: Distrito) => {
+    distritosDataClick = val;
+  };
 
   const handleLoadSearchBy = (val: SearchOption) => {
     searchBy = val;
@@ -62,7 +72,15 @@
 <main>
   <Header>
     <div class="controls">
-      <Views open={openViews} handleOpen={handleOpenViews} {map} {view} />
+      <Views
+        open={openViews}
+        handleOpen={handleOpenViews}
+        {map}
+        {view}
+        {handleloadDistrisoDataClick}
+        {handleSearchByTypeVar}
+        {handleChangeStateModal}
+      />
       {#if !openViews}
         <Search
           {view}
@@ -71,6 +89,7 @@
           {handleLoadDistritos}
           {handleLoadSubDistritos}
           {handleLoadSearchBy}
+          {handleSearchByTypeVar}
         />
         <Layers {map} />
       {/if}
@@ -84,6 +103,8 @@
       {subdistritosData}
       {distritosData}
       {searchBy}
+      {distritosDataClick}
+      {searchByTypeVar}
     />
   {/if}
 </main>

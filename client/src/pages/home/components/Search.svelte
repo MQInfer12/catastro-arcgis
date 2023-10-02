@@ -12,6 +12,7 @@
   } from "../../../interfaces/SubdistritoJSON";
   import type {
     SearchOption,
+    TypeSearch,
   } from "../../../interfaces/SearchOption";
   import { searchOptions } from "../../../storage/searchOptions";
   import MapView from "@arcgis/core/views/MapView";
@@ -22,6 +23,7 @@
   export let handleLoadDistritos: (val: Distrito[]) => void;
   export let handleLoadSubDistritos: (val: Subdistrito[]) => void;
   export let handleLoadSearchBy: (val: SearchOption) => void;
+  export let handleSearchByTypeVar: (val: TypeSearch) => void;
 
   let filter = "";
 
@@ -45,6 +47,8 @@
 
   const handleSearch = (option: SearchOption) => {
     handleLoadSearchBy(option);
+    handleSearchByTypeVar(option.type);
+
     filter = "";
     if (geoJsonLayer) {
       map.remove(geoJsonLayer);
@@ -87,9 +91,9 @@
       view.goTo({
         target: geoJsonLayer.fullExtent,
         duration: 2000,
-        easing: "ease"
-      })
-    })
+        easing: "ease",
+      });
+    });
 
     handleChangeStateModal();
   };
