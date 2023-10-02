@@ -28,7 +28,7 @@
 
   const clickHandler = (e: any, color: TypeColor) => {
     view.hitTest(e).then(res => {
-      if(res.results.length > 0) {
+      if(res.results.length > 0 && res.results[0].layer === geoJsonLayer) {
         //@ts-ignore
         const graphic = res.results[0].graphic;
         map.remove(graphicsLayer);
@@ -72,8 +72,6 @@
         easing: "ease"
       })
     })
-
-    console.log(addedClickEvent);
     if(!addedClickEvent) {
       view.on("click", (e) => clickHandler(e, "green"));
       addedClickEvent = true;
