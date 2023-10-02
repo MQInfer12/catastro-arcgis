@@ -4,6 +4,9 @@
   import type { DistritoJSON } from "../../../interfaces/DistritoJSON";
   import MapView from "@arcgis/core/views/MapView";
   import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
+  import type { TypeColor } from "../../../interfaces/SearchOption";
+  import Graphic from "@arcgis/core/Graphic.js";
+  import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer.js";
 
   export let handleOpen: () => any
   export let open: boolean
@@ -18,6 +21,7 @@
   });
 
   let geoJsonLayer: GeoJSONLayer;
+  let graphicsLayer: GraphicsLayer;
   let active: "distritos" | null = null;
   
   const handleDistritos = () => {
@@ -27,8 +31,31 @@
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
+
+    const cssColor1 = getComputedStyle(document.documentElement).getPropertyValue('--green-1');
+    const hexColor1 = cssColor1.replace('#', '');
+    const r1 = parseInt(hexColor1.slice(0, 2), 16);
+    const g1 = parseInt(hexColor1.slice(2, 4), 16);
+    const b1 = parseInt(hexColor1.slice(4, 6), 16);
+    const cssColor2 = getComputedStyle(document.documentElement).getPropertyValue('--green-2');
+    const hexColor2 = cssColor2.replace('#', '');
+    const r2 = parseInt(hexColor2.slice(0, 2), 16);
+    const g2 = parseInt(hexColor2.slice(2, 4), 16);
+    const b2 = parseInt(hexColor2.slice(4, 6), 16);
     geoJsonLayer = new GeoJSONLayer({
       url: url,
+      renderer: {
+        //@ts-ignore
+        type: "simple",
+        symbol: {
+          type: "simple-fill",
+          color: [r1, g1, b1, 0.4],
+          outline: {
+            color: [r2, g2, b2, 0.6],
+            width: 1
+          }
+        }
+      }
     });
     map.add(geoJsonLayer);
 
@@ -43,12 +70,44 @@
     view.on("click", (e) => {
       view.hitTest(e).then(res => {
         if(res.results.length > 0) {
-          const layer = res.results[0].layer;
-          console.log(layer);
+          //@ts-ignore
+          const graphic = res.results[0].graphic;
+          const newSymbol = {
+            type: "simple-fill",
+            color: [r1, g1, b1, 1],
+            outline: {
+              color: [r2, g2, b2, 1],
+              width: 1
+            }
+          }
+          map.remove(graphicsLayer);
+          graphicsLayer = new GraphicsLayer({
+            graphics: [new Graphic({
+              geometry: graphic.geometry,
+              symbol: newSymbol,
+              attributes: graphic.attributes
+            })]
+          });
+          map.add(graphicsLayer);
+          const FID = graphic.attributes.FID;
+          const distrito = distritosData.features.find(feature => feature.properties.FID === FID);
+          console.log(distrito);
         }
       })
     });
   }
+
+  interface DataButton {
+    text: string
+    handleClick: () => any
+    color: TypeColor
+  }
+
+  const dataButtons: DataButton[] = [{
+    text: "Distritos",
+    handleClick: handleDistritos,
+    color: "green"
+  }]
 
   $: active = open ? active : null;
 </script>
@@ -66,11 +125,13 @@
   </button>
   {#if open} 
   <div class="buttons">
+    {#each dataButtons as button}
     <button 
-      on:click={handleDistritos}
+      on:click={button.handleClick}
       class="view-button"
-      style={`background-color: var(--green-1); opacity: ${active === "distritos" ? "1" : "0.6"};`}
-    >Distritos</button>
+      style={`background-color: var(--${button.color}-1); opacity: ${active === "distritos" ? "1" : "0.6"};`}
+    >{button.text}</button>
+    {/each}
   </div>
   {/if}
 </div>
