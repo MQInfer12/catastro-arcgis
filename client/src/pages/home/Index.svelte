@@ -35,7 +35,9 @@
   };
   // ========== MODAL ==========
   let openModal = false;
+  let ShowbtnOpenModal = false;
   const handleChangeStateModal = (close = false) => {
+    ShowbtnOpenModal = true;
     if (!openModal) openModal = !openModal;
     if (openModal) openModal = true;
     if (close) openModal = false;
@@ -126,7 +128,7 @@
     />
   {/if}
 
-  {#if openModal == false}
+  {#if openModal == false && ShowbtnOpenModal == true}
     <BtnShowModal {handleChangeStateModal} />
   {/if}
 </main>
