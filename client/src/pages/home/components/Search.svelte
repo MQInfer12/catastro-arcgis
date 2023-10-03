@@ -26,7 +26,6 @@
   export let handleLoadSubDistritos: (val: Subdistrito[]) => void;
   export let handleLoadComunas: (val: Comuna[]) => void;
   export let handleLoadSearchBy: (val: SearchOption) => void;
-  export let handleSearchByTypeVar: (val: TypeSearch) => void;
 
   let filter = "";
 
@@ -55,9 +54,7 @@
   let geoJsonLayer: GeoJSONLayer;
 
   const handleSearch = (option: SearchOption) => {
-    console.log(option)
     handleLoadSearchBy(option);
-    handleSearchByTypeVar(option.type);
 
     filter = "";
     if (geoJsonLayer) {

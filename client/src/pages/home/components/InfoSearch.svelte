@@ -14,8 +14,6 @@
   export let subdistritosData: Subdistrito[];
   export let comunasData: Comuna[];
   export let searchBy: SearchOption;
-  export let searchByTypeVar: TypeSearch;
-  export let distritosDataClick: Distrito;
 </script>
 
 <div id="myModal" class="modal">
@@ -23,16 +21,13 @@
     <div>&nbsp;</div>
   </button>
   <div class="modal-content">
-    {#if searchByTypeVar == "distrito"}
+    {#if searchBy.type == "distrito"}
       <Table {searchBy} data={distritosData[0].properties} />
     {/if}
-    {#if searchByTypeVar == "subdistrito"}
+    {#if searchBy.type == "subdistrito"}
       <Table {searchBy} data={subdistritosData[0].properties} />
     {/if}
-    {#if searchByTypeVar == "distritoByClick"}
-      <Table {searchBy} data={distritosDataClick.properties} />
-    {/if}
-    {#if searchByTypeVar == "comuna"}
+    {#if searchBy.type == "comuna"}
       <Table {searchBy} data={comunasData[0].properties} />
     {/if}
   </div>

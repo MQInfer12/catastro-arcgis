@@ -9,7 +9,7 @@
   import InfoSearch from "./components/InfoSearch.svelte";
   import type { Distrito } from "../../interfaces/DistritoJSON";
   import type { Subdistrito } from "../../interfaces/SubdistritoJSON";
-  import type { SearchOption, TypeSearch } from "../../interfaces/SearchOption";
+  import type { SearchOption, TypeColor, TypeSearch } from "../../interfaces/SearchOption";
   import BottomNav from "./components/BottomNav.svelte";
   import Layers from "./components/Layers.svelte";
   import Views from "./components/Views.svelte";
@@ -45,22 +45,12 @@
   let searchBy: SearchOption = {
     data: {
       color: "green",
-      text: "TUNARI",
-      little: "Distrito: 13",
+      little: "",
+      text: ""
     },
-    searchValue: "Distrito: 13 TUNARI",
+    searchValue: "",
     type: "distrito",
-    value: 0,
-  };
-  let searchByTypeVar: TypeSearch;
-  let distritosDataClick: Distrito;
-
-  const handleSearchByTypeVar = (val: TypeSearch) => {
-    searchByTypeVar = val;
-  };
-
-  const handleloadDistrisoDataClick = (val: Distrito) => {
-    distritosDataClick = val;
+    value: ""
   };
 
   const handleLoadSearchBy = (val: SearchOption) => {
@@ -79,6 +69,11 @@
     comunasData = val;
   };
 
+  const handleSearchByTypeVar = (type: TypeSearch, color: TypeColor) => {
+    searchBy.type = type;
+    searchBy.data.color = color;
+  }
+
   let openViews = false;
   const handleOpenViews = () => {
     map.removeAll();
@@ -94,10 +89,10 @@
         handleOpen={handleOpenViews}
         {map}
         {view}
-        {handleloadDistrisoDataClick}
-        {handleSearchByTypeVar}
         {handleChangeStateModal}
+        {handleLoadDistritos}
         {handleLoadComunas}
+        {handleSearchByTypeVar}
       />
       {#if !openViews}
         <Search
@@ -108,7 +103,6 @@
           {handleLoadSubDistritos}
           {handleLoadComunas}
           {handleLoadSearchBy}
-          {handleSearchByTypeVar}
         />
         <Layers {map} />
       {/if}
@@ -123,8 +117,6 @@
       {distritosData}
       {comunasData}
       {searchBy}
-      {distritosDataClick}
-      {searchByTypeVar}
     />
   {/if}
 </main>

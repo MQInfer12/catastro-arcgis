@@ -8,7 +8,6 @@
   import MapView from "@arcgis/core/views/MapView";
   import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
   import type {
-    SearchOption,
     TypeColor,
     TypeSearch,
   } from "../../../interfaces/SearchOption";
@@ -21,9 +20,9 @@
   export let open: boolean;
   export let map: Map;
   export let view: MapView;
-  export let handleloadDistrisoDataClick: (val: Distrito) => void;
-  export let handleSearchByTypeVar: (val: TypeSearch) => void;
+  export let handleSearchByTypeVar: (type: TypeSearch, color: TypeColor) => void;
   export let handleChangeStateModal: (close?: boolean) => void;
+  export let handleLoadDistritos: (val: Distrito[]) => void;
   export let handleLoadComunas: (val: Comuna[]) => void;
 
   let distritosData: DistritoJSON;
@@ -46,7 +45,7 @@
     type: ActiveType,
     color: TypeColor | null
   }
-  type ActiveType = "Distritos" | "Comunas" | null
+  type ActiveType = TypeSearch | null
 
   let active: Active = {
     type: null,
@@ -69,25 +68,23 @@
         });
         map.add(graphicsLayer);
         switch(active.type) {
-          case "Distritos":
+          case "distrito":
             const distritoFID = graphic.attributes.FID;
             const distrito = distritosData.features.find(feature => feature.properties.FID === distritoFID);
             if (distrito) {
-              handleloadDistrisoDataClick(distrito);
-              handleSearchByTypeVar("distritoByClick");
-              handleChangeStateModal();
+              handleLoadDistritos([distrito]);
             }
             break;
-          case "Comunas":
+          case "comuna":
             const comunaID = graphic.attributes.OBJECTID;
             const comuna = comunasData.features.find(feature => feature.properties.OBJECTID == comunaID);
             if(comuna) {
               handleLoadComunas([comuna]);
-              handleSearchByTypeVar("comuna");
-              handleChangeStateModal();
             }
             break;
         }
+        handleSearchByTypeVar(active.type as TypeSearch, active.color as TypeColor);
+        handleChangeStateModal();
       }
     })
   }
@@ -99,12 +96,13 @@
 
   const handleDistritos = (dataButton: DataButton) => {
     map.removeAll();
+    handleChangeStateModal(true);
     active = {
       type: dataButton.text,
       color: dataButton.color
     };
     const blob = new Blob([JSON.stringify(
-      active.type === "Distritos" ? distritosData :
+      active.type === "distrito" ? distritosData :
       comunasData
     )], {
       type: "application/json",
@@ -136,11 +134,11 @@
 
   const dataButtons: DataButton[] = [
     {
-      text: "Distritos",
+      text: "distrito",
       color: "green",
     },
     {
-      text: "Comunas",
+      text: "comuna",
       color: "red"
     },
   ];
@@ -164,7 +162,7 @@
           class="view-button"
           style={`background-color: var(--${button.color}-1); opacity: ${
             active.type === button.text ? "1" : "0.6"
-          };`}>{button.text}</button
+          };`}>{button.text}s</button
         >
       {/each}
     </div>
@@ -227,5 +225,6 @@
     border: none;
     color: var(--white);
     transition: all 0.3s;
+    text-transform: capitalize;
   }
 </style>
