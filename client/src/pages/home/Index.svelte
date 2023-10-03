@@ -97,6 +97,7 @@
         {handleloadDistrisoDataClick}
         {handleSearchByTypeVar}
         {handleChangeStateModal}
+        {handleLoadComunas}
       />
       {#if !openViews}
         <Search

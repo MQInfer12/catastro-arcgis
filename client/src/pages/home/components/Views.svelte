@@ -15,7 +15,7 @@
   import Graphic from "@arcgis/core/Graphic.js";
   import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer.js";
   import { colorToSymbol } from "../../../utilities/colorToSymbol";
-  import type { ComunaJSON } from "../../../interfaces/ComunaJSON";
+  import type { Comuna, ComunaJSON } from "../../../interfaces/ComunaJSON";
 
   export let handleOpen: () => any;
   export let open: boolean;
@@ -24,6 +24,7 @@
   export let handleloadDistrisoDataClick: (val: Distrito) => void;
   export let handleSearchByTypeVar: (val: TypeSearch) => void;
   export let handleChangeStateModal: (close?: boolean) => void;
+  export let handleLoadComunas: (val: Comuna[]) => void;
 
   let distritosData: DistritoJSON;
   distritos.subscribe((val) => {
@@ -53,7 +54,7 @@
   };
   let addedClickEvent = false;
 
-  const clickHandler = (e: any, color: TypeColor) => {
+  const clickHandler = (e: any) => {
     view.hitTest(e).then(res => {
       if(res.results.length > 0 && res.results[0].layer === geoJsonLayer) {
         //@ts-ignore
@@ -62,17 +63,30 @@
         graphicsLayer = new GraphicsLayer({
           graphics: [new Graphic({
             geometry: graphic.geometry,
-            symbol: colorToSymbol(color),
+            symbol: colorToSymbol(active.color as TypeColor),
             attributes: graphic.attributes
           })]
         });
         map.add(graphicsLayer);
-        const FID = graphic.attributes.FID || graphic.attributes.OBJECTID;
-        const distrito = distritosData.features.find(feature => feature.properties.FID === FID);
-        if (distrito) {
-          handleloadDistrisoDataClick(distrito);
-          handleSearchByTypeVar("distritoByClick");
-          handleChangeStateModal();
+        switch(active.type) {
+          case "Distritos":
+            const distritoFID = graphic.attributes.FID;
+            const distrito = distritosData.features.find(feature => feature.properties.FID === distritoFID);
+            if (distrito) {
+              handleloadDistrisoDataClick(distrito);
+              handleSearchByTypeVar("distritoByClick");
+              handleChangeStateModal();
+            }
+            break;
+          case "Comunas":
+            const comunaID = graphic.attributes.OBJECTID;
+            const comuna = comunasData.features.find(feature => feature.properties.OBJECTID == comunaID);
+            if(comuna) {
+              handleLoadComunas([comuna]);
+              handleSearchByTypeVar("comuna");
+              handleChangeStateModal();
+            }
+            break;
         }
       }
     })
@@ -89,7 +103,10 @@
       type: dataButton.text,
       color: dataButton.color
     };
-    const blob = new Blob([JSON.stringify(distritosData)], {
+    const blob = new Blob([JSON.stringify(
+      active.type === "Distritos" ? distritosData :
+      comunasData
+    )], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
@@ -99,7 +116,7 @@
       renderer: {
         //@ts-ignore
         type: "simple",
-        symbol: colorToSymbol("green", 0.4)
+        symbol: colorToSymbol(active.color as TypeColor, 0.4)
       }
     });
     map.add(geoJsonLayer);
@@ -112,7 +129,7 @@
       })
     })
     if(!addedClickEvent) {
-      view.on("click", (e) => clickHandler(e, "green"));
+      view.on("click", (e) => clickHandler(e));
       addedClickEvent = true;
     }
   }
