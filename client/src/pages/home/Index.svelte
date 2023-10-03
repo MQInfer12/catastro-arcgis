@@ -9,11 +9,16 @@
   import InfoSearch from "./components/InfoSearch.svelte";
   import type { Distrito } from "../../interfaces/DistritoJSON";
   import type { Subdistrito } from "../../interfaces/SubdistritoJSON";
-  import type { SearchOption, TypeColor, TypeSearch } from "../../interfaces/SearchOption";
+  import type {
+    SearchOption,
+    TypeColor,
+    TypeSearch,
+  } from "../../interfaces/SearchOption";
   import BottomNav from "./components/BottomNav.svelte";
   import Layers from "./components/Layers.svelte";
   import Views from "./components/Views.svelte";
   import type { Comuna } from "../../interfaces/ComunaJSON";
+  import BtnShowModal from "./components/btnShowModal.svelte";
 
   const map = new Map({
     basemap: "gray-vector",
@@ -46,11 +51,11 @@
     data: {
       color: "green",
       little: "",
-      text: ""
+      text: "",
     },
     searchValue: "",
     type: "distrito",
-    value: ""
+    value: "",
   };
 
   const handleLoadSearchBy = (val: SearchOption) => {
@@ -72,12 +77,13 @@
   const handleSearchByTypeVar = (type: TypeSearch, color: TypeColor) => {
     searchBy.type = type;
     searchBy.data.color = color;
-  }
+  };
 
   let openViews = false;
   const handleOpenViews = () => {
     map.removeAll();
     openViews = !openViews;
+    handleChangeStateModal(true);
   };
 </script>
 
@@ -118,6 +124,10 @@
       {comunasData}
       {searchBy}
     />
+  {/if}
+
+  {#if openModal == false}
+    <BtnShowModal {handleChangeStateModal} />
   {/if}
 </main>
 

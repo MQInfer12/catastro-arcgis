@@ -3,7 +3,7 @@
   export let icon: string;
 </script>
 
-<button on:click={handleClick}>
+<button on:click={(handleClick)}>
   <i class={icon}></i>
 </button>
 
