@@ -13,7 +13,7 @@
   import BottomNav from "./components/BottomNav.svelte";
   import Layers from "./components/Layers.svelte";
   import Views from "./components/Views.svelte";
-    import type { Comuna } from "../../interfaces/ComunaJSON";
+  import type { Comuna } from "../../interfaces/ComunaJSON";
 
   const map = new Map({
     basemap: "gray-vector",
@@ -40,7 +40,18 @@
   let distritosData: Distrito[];
   let subdistritosData: Subdistrito[];
   let comunasData: Comuna[];
-  let searchBy: SearchOption;
+
+  //load by default the search
+  let searchBy: SearchOption = {
+    data: {
+      color: "green",
+      text: "TUNARI",
+      little: "Distrito: 13",
+    },
+    searchValue: "Distrito: 13 TUNARI",
+    type: "distrito",
+    value: 0,
+  };
   let searchByTypeVar: TypeSearch;
   let distritosDataClick: Distrito;
 

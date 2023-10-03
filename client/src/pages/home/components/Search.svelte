@@ -55,6 +55,7 @@
   let geoJsonLayer: GeoJSONLayer;
 
   const handleSearch = (option: SearchOption) => {
+    console.log(option)
     handleLoadSearchBy(option);
     handleSearchByTypeVar(option.type);
 
