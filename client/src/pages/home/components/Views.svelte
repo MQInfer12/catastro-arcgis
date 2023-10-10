@@ -42,7 +42,7 @@
   export let handleLoadEducacion: (val: Educacion[]) => void;
   export let handleLoadComunas: (val: Comuna[]) => void;
 
-  // create the variable and asigned the val to the store
+  // ===== start - create the variable and asigned the val to the store =====
   let distritosData: DistritoJSON;
   subscribeAndAssignData(distritos, (val: DistritoJSON) => {
     distritosData = val;
@@ -62,6 +62,7 @@
   subscribeAndAssignData(educacion, (val: EducacionJSON) => {
     educacionData = val;
   });
+  // ===== end =====
 
   let geoJsonLayer: GeoJSONLayer;
   let graphicsLayer: GraphicsLayer;
@@ -119,7 +120,7 @@
             if (educacion) handleLoadEducacion([educacion]);
             break;
         }
-        
+
         handleSearchByTypeVar(
           active.type as TypeSearch,
           active.color as TypeColor
