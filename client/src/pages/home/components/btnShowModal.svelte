@@ -4,7 +4,7 @@
 
 <div class="modal">
   <div class="modal-content">
-    <button on:click={() => handleChangeStateModal()}> Abrir contenido</button>
+    <button on:click={() => handleChangeStateModal()}>Ver detalles</button>
   </div>
 </div>
 

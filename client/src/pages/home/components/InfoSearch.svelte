@@ -1,22 +1,26 @@
 <script lang="ts">
-    import type { Comuna } from "../../../interfaces/ComunaJSON";
+  import type { Comuna } from "../../../interfaces/ComunaJSON";
   import type { Distrito } from "../../../interfaces/DistritoJSON";
+    import type { Educacion } from "../../../interfaces/EducacionJSON";
+  import type { Salud } from "../../../interfaces/SaludJSON";
   import type {
     SearchOption,
-    TypeSearch,
   } from "../../../interfaces/SearchOption";
   import type { Subdistrito } from "../../../interfaces/SubdistritoJSON";
   import Table from "./Table.svelte";
+  import { fly } from "svelte/transition";
 
   // ======== PARAMS ========
   export let handleFun: (close?: boolean) => void;
   export let distritosData: Distrito[];
   export let subdistritosData: Subdistrito[];
   export let comunasData: Comuna[];
+  export let saludData: Salud[];
+  export let educacionData: Educacion[];
   export let searchBy: SearchOption;
 </script>
 
-<div id="myModal" class="modal">
+<div transition:fly={{ y: 250, duration: 800 }} id="myModal" class="modal">
   <button class="close-button" on:click={() => handleFun(true)}>
     <div>&nbsp;</div>
   </button>
@@ -29,6 +33,12 @@
     {/if}
     {#if searchBy.type == "comuna"}
       <Table {searchBy} data={comunasData[0].properties} />
+    {/if}
+    {#if searchBy.type == "salud"}
+      <Table {searchBy} data={saludData[0].properties} />
+    {/if}
+    {#if searchBy.type == "educacion"}
+      <Table {searchBy} data={educacionData[0].properties} />
     {/if}
   </div>
 </div>
@@ -44,17 +54,7 @@
     align-items: center;
     justify-content: center;
     height: 30%;
-    animation: transitionMove 1s;
     isolation: isolate;
-  }
-
-  @keyframes transitionMove {
-    0% {
-      transform: translateY(250px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
   }
 
   /* Style for the modal content */

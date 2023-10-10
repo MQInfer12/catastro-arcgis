@@ -3,7 +3,7 @@
     Distrito,
     DistritoJSON,
   } from "../../../interfaces/DistritoJSON";
-  import { comunas, distritos, subdistritos } from "../../../storage/mapData";
+  import { comunas, distritos, educacion, salud, subdistritos } from "../../../storage/mapData";
   import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
   import Options from "./Options.svelte";
   import type {
@@ -17,14 +17,18 @@
   import { searchOptions } from "../../../storage/searchOptions";
   import MapView from "@arcgis/core/views/MapView";
   import Map from "@arcgis/core/Map";
-    import { colorToSymbol } from "../../../utilities/colorToSymbol";
-    import type { Comuna, ComunaJSON } from "../../../interfaces/ComunaJSON";
+  import { colorToSymbol, createPointSymbol } from "../../../utilities/colorToSymbol";
+  import type { Comuna, ComunaJSON } from "../../../interfaces/ComunaJSON";
+  import type { Salud, SaludJSON } from "../../../interfaces/SaludJSON";
+    import type { Educacion, EducacionJSON } from "../../../interfaces/EducacionJSON";
 
   // ======== PARAMS ========
   export let handleChangeStateModal: () => void;
   export let handleLoadDistritos: (val: Distrito[]) => void;
   export let handleLoadSubDistritos: (val: Subdistrito[]) => void;
   export let handleLoadComunas: (val: Comuna[]) => void;
+  export let handleLoadSalud: (val: Salud[]) => void;
+  export let handleLoadEducacion: (val: Educacion[]) => void;
   export let handleLoadSearchBy: (val: SearchOption) => void;
 
   let filter = "";
@@ -32,6 +36,8 @@
   let distritosData: DistritoJSON;
   let subdistritosData: SubdistritoJSON;
   let comunasData: ComunaJSON;
+  let saludData: SaludJSON;
+  let educacionData: EducacionJSON;
 
   distritos.subscribe((val) => {
     if (val) {
@@ -48,6 +54,16 @@
       comunasData = val;
     }
   });
+  salud.subscribe((val) => {
+    if(val) {
+      saludData = val;
+    }
+  });
+  educacion.subscribe((val) => {
+    if(val) {
+      educacionData = val;
+    }
+  });
 
   export let map: Map;
   export let view: MapView;
@@ -62,6 +78,7 @@
     }
 
     let showData;
+    let featureType;
     switch (option.type) {
       case "distrito":
         const filteredDistritos = distritosData.features.filter(
@@ -93,6 +110,28 @@
         };
         handleLoadComunas(filteredComunas);
         break;
+      case "salud":
+        const filteredSalud = saludData.features.filter(
+          (feature) => feature.properties.OBJECTID === option.value
+        );
+        featureType = saludData.features[0].geometry.type;
+        showData = {
+          ...saludData,
+          features: filteredSalud,
+        };
+        handleLoadSalud(filteredSalud);
+        break;
+      case "educacion": 
+        const filteredEducacion = educacionData.features.filter(
+          (feature) => feature.properties.OBJECTID === option.value
+        );
+        featureType = educacionData.features[0].geometry.type;
+        showData = {
+          ...educacionData,
+          features: filteredEducacion,
+        };
+        handleLoadEducacion(filteredEducacion);
+        break;
     }
 
     const blob = new Blob([JSON.stringify(showData)], {
@@ -104,7 +143,7 @@
       renderer: {
         //@ts-ignore
         type: "simple",
-        symbol: colorToSymbol(option.data.color, 0.4)
+        symbol: featureType === "Point" ? createPointSymbol(option.data.color, 1, 12) : colorToSymbol(option.data.color, 0.4)
       }
     });
     map.add(geoJsonLayer);
