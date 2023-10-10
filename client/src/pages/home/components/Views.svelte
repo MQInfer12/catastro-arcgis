@@ -1,6 +1,6 @@
 <script lang="ts">
   import Map from "@arcgis/core/Map";
-  import { comunas, distritos } from "../../../storage/mapData";
+  import { comunas, distritos, educacion, salud } from "../../../storage/mapData";
   import type {
     Distrito,
     DistritoJSON,
@@ -13,8 +13,10 @@
   } from "../../../interfaces/SearchOption";
   import Graphic from "@arcgis/core/Graphic.js";
   import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer.js";
-  import { colorToSymbol } from "../../../utilities/colorToSymbol";
+  import { colorToSymbol, createPointSymbol } from "../../../utilities/colorToSymbol";
   import type { Comuna, ComunaJSON } from "../../../interfaces/ComunaJSON";
+  import type { Salud, SaludJSON } from "../../../interfaces/SaludJSON";
+    import type { Educacion, EducacionJSON } from "../../../interfaces/EducacionJSON";
 
   export let handleOpen: () => any;
   export let open: boolean;
@@ -23,6 +25,8 @@
   export let handleSearchByTypeVar: (type: TypeSearch, color: TypeColor) => void;
   export let handleChangeStateModal: (close?: boolean) => void;
   export let handleLoadDistritos: (val: Distrito[]) => void;
+  export let handleLoadSalud: (val: Salud[]) => void;
+  export let handleLoadEducacion: (val: Educacion[]) => void;
   export let handleLoadComunas: (val: Comuna[]) => void;
 
   let distritosData: DistritoJSON;
@@ -35,6 +39,18 @@
   comunas.subscribe((val) => {
     if (val) {
       comunasData = val;
+    }
+  });
+  let saludData: SaludJSON;
+  salud.subscribe((val) => {
+    if (val) {
+      saludData = val;
+    }
+  });
+  let educacionData: EducacionJSON;
+  educacion.subscribe((val) => {
+    if (val) {
+      educacionData = val;
     }
   });
 
@@ -58,11 +74,12 @@
       if(res.results.length > 0 && res.results[0].layer === geoJsonLayer) {
         //@ts-ignore
         const graphic = res.results[0].graphic;
+        const geometryType = graphic.geometry.type;
         map.remove(graphicsLayer);
         graphicsLayer = new GraphicsLayer({
           graphics: [new Graphic({
             geometry: graphic.geometry,
-            symbol: colorToSymbol(active.color as TypeColor),
+            symbol: geometryType === "point" ? createPointSymbol(active.color as TypeColor, 1, 12) : colorToSymbol(active.color as TypeColor),
             attributes: graphic.attributes
           })]
         });
@@ -80,6 +97,20 @@
             const comuna = comunasData.features.find(feature => feature.properties.OBJECTID == comunaID);
             if(comuna) {
               handleLoadComunas([comuna]);
+            }
+            break;
+          case "salud":
+            const saludID = graphic.attributes.OBJECTID;
+            const salud = saludData.features.find(feature => feature.properties.OBJECTID == saludID);
+            if(salud) {
+              handleLoadSalud([salud]);
+            }
+            break;  
+          case "educacion":
+            const educacionID = graphic.attributes.OBJECTID;
+            const educacion = educacionData.features.find(feature => feature.properties.OBJECTID == educacionID);
+            if(educacion) {
+              handleLoadEducacion([educacion]);
             }
             break;
         }
@@ -101,10 +132,15 @@
       type: dataButton.text,
       color: dataButton.color
     };
-    const blob = new Blob([JSON.stringify(
+
+    const data = 
       active.type === "distrito" ? distritosData :
-      comunasData
-    )], {
+      active.type === "comuna" ? comunasData :
+      active.type === "salud" ? saludData :
+      educacionData;
+    const featureType = data.features[0].geometry.type;
+    
+    const blob = new Blob([JSON.stringify(data)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
@@ -114,7 +150,7 @@
       renderer: {
         //@ts-ignore
         type: "simple",
-        symbol: colorToSymbol(active.color as TypeColor, 0.4)
+        symbol: featureType === "Point" ? createPointSymbol(active.color as TypeColor, 0.4) : colorToSymbol(active.color as TypeColor, 0.4)
       }
     });
     map.add(geoJsonLayer);
@@ -141,6 +177,14 @@
       text: "comuna",
       color: "red"
     },
+    {
+      text: "salud",
+      color: "yellow"
+    },
+    {
+      text: "educacion",
+      color: "purple"
+    }
   ];
 
   $: active.type = open ? active.type : null;
@@ -162,7 +206,7 @@
           class="view-button"
           style={`background-color: var(--${button.color}-1); opacity: ${
             active.type === button.text ? "1" : "0.6"
-          };`}>{button.text}s</button
+          };`}>{button.text}</button
         >
       {/each}
     </div>

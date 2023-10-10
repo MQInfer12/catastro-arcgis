@@ -1,6 +1,4 @@
 <script lang="ts">
-  import IconButton from "./components/IconButton.svelte";
-
   import "@arcgis/core/assets/esri/themes/light/main.css";
   import Map from "@arcgis/core/Map";
   import MapView from "@arcgis/core/views/MapView";
@@ -19,6 +17,8 @@
   import Views from "./components/Views.svelte";
   import type { Comuna } from "../../interfaces/ComunaJSON";
   import BtnShowModal from "./components/btnShowModal.svelte";
+    import type { Salud } from "../../interfaces/SaludJSON";
+    import type { Educacion } from "../../interfaces/EducacionJSON";
 
   const map = new Map({
     basemap: "gray-vector",
@@ -47,6 +47,8 @@
   let distritosData: Distrito[];
   let subdistritosData: Subdistrito[];
   let comunasData: Comuna[];
+  let saludData: Salud[];
+  let educacionData: Educacion[];
 
   //load by default the search
   let searchBy: SearchOption = {
@@ -76,6 +78,14 @@
     comunasData = val;
   };
 
+  const handleLoadSalud = (val: Salud[]) => {
+    saludData = val;
+  };
+
+  const handleLoadEducacion = (val: Educacion[]) => {
+    educacionData = val;
+  }
+
   const handleSearchByTypeVar = (type: TypeSearch, color: TypeColor) => {
     searchBy.type = type;
     searchBy.data.color = color;
@@ -100,6 +110,8 @@
         {handleChangeStateModal}
         {handleLoadDistritos}
         {handleLoadComunas}
+        {handleLoadSalud}
+        {handleLoadEducacion}
         {handleSearchByTypeVar}
       />
       {#if !openViews}
@@ -110,6 +122,8 @@
           {handleLoadDistritos}
           {handleLoadSubDistritos}
           {handleLoadComunas}
+          {handleLoadSalud}
+          {handleLoadEducacion}
           {handleLoadSearchBy}
         />
         <Layers {map} />
@@ -124,10 +138,11 @@
       {subdistritosData}
       {distritosData}
       {comunasData}
+      {saludData}
+      {educacionData}
       {searchBy}
     />
   {/if}
-
   {#if openModal == false && ShowbtnOpenModal == true}
     <BtnShowModal {handleChangeStateModal} />
   {/if}
