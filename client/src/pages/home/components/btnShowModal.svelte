@@ -1,22 +1,17 @@
 <script lang="ts">
+  import { fly } from "svelte/transition";
+  import type { SearchOption } from "../../../interfaces/SearchOption";
   export let handleChangeStateModal: (close?: boolean) => void;
+  export let searchBy: SearchOption;
 </script>
 
-<div class="modal">
+<div transition:fly={{ y: 250, duration: 800 }} class="modal">
   <div class="modal-content">
-    <button on:click={() => handleChangeStateModal()}>Ver detalles</button>
+    <button style={`background-color: var(--${searchBy.data.color}-1)`} on:click={() => handleChangeStateModal()}>Ver detalles</button>
   </div>
 </div>
 
 <style>
-  @keyframes transitionMove {
-    0% {
-      transform: translateY(250px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
-  }
   .modal {
     display: flex;
     position: fixed;
@@ -27,7 +22,6 @@
     align-items: center;
     justify-content: center;
     height: 30%;
-    animation: transitionMove 0.3s;
     isolation: isolate;
   }
 
@@ -42,8 +36,10 @@
 
   button {
     padding: 10px;
-    border-radius: 15px;
+    border-radius: 10px;
     cursor: pointer;
-    background-color: var(--gray-50);
+    border: none;
+    color: white;
+    transition: background-color 0.3s;
   }
 </style>

@@ -144,7 +144,7 @@
     />
   {/if}
   {#if openModal == false && ShowbtnOpenModal == true}
-    <BtnShowModal {handleChangeStateModal} />
+    <BtnShowModal searchBy={searchBy} {handleChangeStateModal} />
   {/if}
 </main>
 

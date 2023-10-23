@@ -8,7 +8,7 @@
   } from "../../../interfaces/SearchOption";
   import type { Subdistrito } from "../../../interfaces/SubdistritoJSON";
   import Table from "./Table.svelte";
-  import { fly } from "svelte/transition";
+  import { fly, fade } from "svelte/transition";
 
   // ======== PARAMS ========
   export let handleFun: (close?: boolean) => void;
@@ -20,40 +20,56 @@
   export let searchBy: SearchOption;
 </script>
 
-<div transition:fly={{ y: 250, duration: 800 }} id="myModal" class="modal">
-  <button class="close-button" on:click={() => handleFun(true)}>
-    <div>&nbsp;</div>
-  </button>
-  <div class="modal-content">
-    {#if searchBy.type == "distrito"}
-      <Table {searchBy} data={distritosData[0].properties} />
-    {/if}
-    {#if searchBy.type == "subdistrito"}
-      <Table {searchBy} data={subdistritosData[0].properties} />
-    {/if}
-    {#if searchBy.type == "comuna"}
-      <Table {searchBy} data={comunasData[0].properties} />
-    {/if}
-    {#if searchBy.type == "salud"}
-      <Table {searchBy} data={saludData[0].properties} />
-    {/if}
-    {#if searchBy.type == "educacion"}
-      <Table {searchBy} data={educacionData[0].properties} />
-    {/if}
+<div class='modal-container'>
+  <div transition:fly={{ y: 200, duration: 800 }} id="myModal" class="modal">
+    <button class="close-button" on:click={() => handleFun(true)}>
+      <div>&nbsp;</div>
+    </button>
+    <div class="modal-content">
+      {#if searchBy.type == "distrito"}
+        <Table {searchBy} data={distritosData[0].properties} />
+      {/if}
+      {#if searchBy.type == "subdistrito"}
+        <Table {searchBy} data={subdistritosData[0].properties} />
+      {/if}
+      {#if searchBy.type == "comuna"}
+        <Table {searchBy} data={comunasData[0].properties} />
+      {/if}
+      {#if searchBy.type == "salud"}
+        <Table {searchBy} data={saludData[0].properties} />
+      {/if}
+      {#if searchBy.type == "educacion"}
+        <Table {searchBy} data={educacionData[0].properties} />
+      {/if}
+    </div>
   </div>
+  <button transition:fade={{ duration: 800 }} class='bg' on:click={() => handleFun(true)} />
 </div>
 
 <style lang="scss">
+  .modal-container {
+    position: fixed;
+    inset: 0;
+    isolation: isolate;
+    z-index: 1001;
+  }
+  .bg {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.3;
+  }
   .modal {
     display: flex;
     position: fixed;
-    bottom: 0px;
-    left: 0%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
     z-index: 1;
-    width: 100%;
+    width: 400px;
     align-items: center;
     justify-content: center;
-    height: 30%;
+    max-height: 400px;
     isolation: isolate;
   }
 

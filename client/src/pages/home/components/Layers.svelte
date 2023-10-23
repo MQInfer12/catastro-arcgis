@@ -5,6 +5,7 @@
   import LayerOTB from "../../../assets/images/layerOTB.png";
   import LayerDEM from "../../../assets/images/layerDEM.png";
   import LayerMAN from "../../../assets/images/layerMAN.png";
+  import MapImageLayer from "@arcgis/core/layers/MapImageLayer.js";
 
   let active = false;
 
@@ -34,6 +35,15 @@
       color: "var(--purple-1)",
       layer: new WMSLayer({
         url: "http://186.121.246.218:6080/arcgis/services/catastro/manzanasWms/MapServer/WMSServer",
+      }),
+    },
+    {
+      name: "Sat",
+      active: false,
+      img: LayerMAN,
+      color: "var(--green-1)",
+      layer: new MapImageLayer({
+        url: "http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2022/MapServer",
       }),
     },
     /* {

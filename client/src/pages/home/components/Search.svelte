@@ -12,7 +12,6 @@
   } from "../../../interfaces/SubdistritoJSON";
   import type {
     SearchOption,
-    TypeSearch,
   } from "../../../interfaces/SearchOption";
   import { searchOptions } from "../../../storage/searchOptions";
   import MapView from "@arcgis/core/views/MapView";
