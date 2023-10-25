@@ -17,8 +17,8 @@
   import Views from "./components/Views.svelte";
   import type { Comuna } from "../../interfaces/ComunaJSON";
   import BtnShowModal from "./components/btnShowModal.svelte";
-    import type { Salud } from "../../interfaces/SaludJSON";
-    import type { Educacion } from "../../interfaces/EducacionJSON";
+  import type { Salud } from "../../interfaces/SaludJSON";
+  import type { Educacion } from "../../interfaces/EducacionJSON";
 
   const map = new Map({
     basemap: "gray-vector",

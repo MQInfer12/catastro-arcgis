@@ -11,7 +11,7 @@
     SubdistritoJSON,
   } from "../../../interfaces/SubdistritoJSON";
   import type {
-    SearchOption,
+    SearchOption, TypeCoords,
   } from "../../../interfaces/SearchOption";
   import { searchOptions } from "../../../storage/searchOptions";
   import MapView from "@arcgis/core/views/MapView";
@@ -19,7 +19,12 @@
   import { colorToSymbol, createPointSymbol } from "../../../utilities/colorToSymbol";
   import type { Comuna, ComunaJSON } from "../../../interfaces/ComunaJSON";
   import type { Salud, SaludJSON } from "../../../interfaces/SaludJSON";
-    import type { Educacion, EducacionJSON } from "../../../interfaces/EducacionJSON";
+  import type { Educacion, EducacionJSON } from "../../../interfaces/EducacionJSON";
+  import { distanceBetweenCoords } from "../../../utilities/distanceBeetweenCoords";
+  import Circle from '@arcgis/core/geometry/Circle';
+  import Graphic from "@arcgis/core/Graphic";
+  import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
+    import { afterUpdate, beforeUpdate } from "svelte";
 
   // ======== PARAMS ========
   export let handleChangeStateModal: () => void;
@@ -68,10 +73,14 @@
   export let view: MapView;
   let geoJsonLayer: GeoJSONLayer;
 
+  const coordRegex = /-[0-9]*\.[0-9]+, -[0-9]*\.[0-9]+/i;
+
   const handleSearch = (option: SearchOption) => {
     handleLoadSearchBy(option);
 
-    filter = "";
+    if(!filter.match(coordRegex)) {
+      filter = "";
+    }
     if (geoJsonLayer) {
       map.remove(geoJsonLayer);
     }
@@ -163,18 +172,67 @@
     optionsData = val;
   });
 
-  $: filtered = optionsData.filter((option) =>
-    option.searchValue.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
-  );
+  const inDistance = 300;
+
+  let circleLayer = new GraphicsLayer();
+  let circleGraphic: Graphic;
+
+  //show a circle around the coordinates
+  afterUpdate(() => {
+    map.remove(circleLayer);
+    if(filter.match(coordRegex)) {
+      const coords: TypeCoords = filter.split(",").map(val => Number(val)) as TypeCoords;
+      const reversedCoords: TypeCoords = coords.toReversed() as TypeCoords;
+      circleLayer.remove(circleGraphic);
+      circleGraphic = new Graphic({
+        geometry: new Circle({
+          center: reversedCoords as any,
+          radius: inDistance * 2
+        }),
+        symbol: colorToSymbol("green", 0.3)
+      });
+      circleLayer.add(circleGraphic);
+      map.add(circleLayer);
+      circleLayer.when(() => {
+        view.goTo({
+          target: reversedCoords,
+          duration: 2000,
+          easing: "ease",
+        });
+      });
+    }
+  });
+
+  $: filtered = optionsData.filter((option) => {
+    if(filter.match(coordRegex)) {
+      if(option.coords) {
+        const coords: TypeCoords = filter.split(",").map(val => Number(val)) as TypeCoords;
+        const reversedCoords: TypeCoords = coords.toReversed() as TypeCoords;
+        const distance = distanceBetweenCoords(option.coords, reversedCoords);
+        return distance < inDistance / 1000;
+      } else {
+        return false;
+      }
+    }
+    return option.searchValue.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+  });
   $: active = filter.length > 0 && filtered.length !== 0;
 </script>
 
 <div class="container">
   <div class="input-container">
     <input bind:value={filter} placeholder="Buscar" type="text" class={active ? "active" : ""} />
+    {#if filter}
+    <button class="fa-solid fa-xmark" on:click={() => filter = ""} />
+    {:else}
     <i class="fa-solid fa-magnifying-glass" />
+    {/if}
   </div>
-  <Options {active} {handleSearch} options={filtered} />
+  <Options 
+    {active} 
+    {handleSearch} 
+    options={filtered} 
+  />
 </div>
 
 <style lang="scss">
@@ -206,11 +264,17 @@
       color: var(--gray-200);
     }
   }
-  i {
+  i, button {
     position: absolute;
     right: 16px;
     color: var(--gray-400);
     font-size: 18px;
     pointer-events: none;
+    background-color: transparent;
+    border: none;
+  }
+  button {
+    pointer-events: all;
+    right: 20px;
   }
 </style>

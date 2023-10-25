@@ -15,6 +15,7 @@
   import type { ComunaJSON } from './interfaces/ComunaJSON';
     import type { SaludJSON } from './interfaces/SaludJSON';
     import type { EducacionJSON } from './interfaces/EducacionJSON';
+    
 
   export let url = "";
 
@@ -51,7 +52,8 @@
         },
         type: "distrito",
         value: feature.properties.FID,
-        searchValue: feature.properties.Nombre + " " + feature.properties.comuna
+        searchValue: feature.properties.Nombre + " " + feature.properties.comuna,
+        coords: feature.geometry.
       })),
       ...dataSubdistritos.features.map(feature => ({
         data: {
@@ -61,7 +63,8 @@
         },
         type: "subdistrito",
         value: feature.properties.OBJECTID,
-        searchValue: feature.properties.Nombre
+        searchValue: feature.properties.Nombre,
+        coords: null
       })),
       ...dataComunas.features.map(feature => ({
         data: {
@@ -71,7 +74,8 @@
         },
         type: "comuna",
         value: feature.properties.OBJECTID,
-        searchValue: feature.properties.Comuna + " " + feature.properties.OBJECTID
+        searchValue: feature.properties.Comuna + " " + feature.properties.OBJECTID,
+        coords: null
       })),
       ...dataSalud.features.map(feature => ({
         data: {
@@ -81,7 +85,8 @@
         },
         type: "salud",
         value: feature.properties.OBJECTID,
-        searchValue: "salud " + feature.properties.TIPO + " " + feature.properties.NOMBRE
+        searchValue: "salud " + feature.properties.TIPO + " " + feature.properties.NOMBRE,
+        coords: feature.geometry.coordinates
       })),
       ...dataEducacion.features.map(feature => ({
         data: {
@@ -91,7 +96,8 @@
         },
         type: "educacion",
         value: feature.properties.OBJECTID,
-        searchValue: "Unidad educativa " + feature.properties.DEPENDENCI + " " + feature.properties.NOMBRE
+        searchValue: "Unidad educativa " + feature.properties.DEPENDENCI + " " + feature.properties.NOMBRE,
+        coords: feature.geometry.coordinates
       }))
     ] as SearchOption[]);
   });
