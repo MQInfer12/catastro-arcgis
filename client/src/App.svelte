@@ -13,8 +13,9 @@
   import dataSaludJSON from './data/salud.json';
   import dataEducacionJSON from './data/educacion.json';
   import type { ComunaJSON } from './interfaces/ComunaJSON';
-    import type { SaludJSON } from './interfaces/SaludJSON';
-    import type { EducacionJSON } from './interfaces/EducacionJSON';
+  import type { SaludJSON } from './interfaces/SaludJSON';
+  import type { EducacionJSON } from './interfaces/EducacionJSON';
+  import { centroid, polygon } from '@turf/turf'
     
 
   export let url = "";
@@ -53,7 +54,7 @@
         type: "distrito",
         value: feature.properties.FID,
         searchValue: feature.properties.Nombre + " " + feature.properties.comuna,
-        coords: feature.geometry.
+        coords: centroid(polygon(feature.geometry.coordinates)).geometry.coordinates
       })),
       ...dataSubdistritos.features.map(feature => ({
         data: {
@@ -75,7 +76,7 @@
         type: "comuna",
         value: feature.properties.OBJECTID,
         searchValue: feature.properties.Comuna + " " + feature.properties.OBJECTID,
-        coords: null
+        coords: centroid(polygon(feature.geometry.coordinates)).geometry.coordinates
       })),
       ...dataSalud.features.map(feature => ({
         data: {

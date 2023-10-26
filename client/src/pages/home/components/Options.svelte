@@ -11,7 +11,7 @@
   {#each options as option}
     <button on:click={() => handleSearch(option)} class="row">
       <div>
-        <small>{option.data.little}</small>
+        <small>{option.data.message || option.data.little}</small>
         <p>{option.data.text}</p>
       </div>
       <p style={`background-color: var(--${option.data.color}-1)`}>{option.type}</p>

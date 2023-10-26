@@ -76,6 +76,7 @@
   const coordRegex = /-[0-9]*\.[0-9]+, -[0-9]*\.[0-9]+/i;
 
   const handleSearch = (option: SearchOption) => {
+    console.log(option.coords);
     handleLoadSearchBy(option);
 
     if(!filter.match(coordRegex)) {
@@ -204,11 +205,20 @@
   });
 
   $: filtered = optionsData.filter((option) => {
+    option.data.message = undefined;
     if(filter.match(coordRegex)) {
       if(option.coords) {
         const coords: TypeCoords = filter.split(",").map(val => Number(val)) as TypeCoords;
         const reversedCoords: TypeCoords = coords.toReversed() as TypeCoords;
         const distance = distanceBetweenCoords(option.coords, reversedCoords);
+        switch(option.type) {
+          case "distrito":
+          case "comuna":
+            option.data.message = "Centroide del polígono a " + Math.round(distance * 1000) + "m del punto";
+            break;
+          default:
+            option.data.message = "A " + Math.round(distance * 1000) + "m del punto";
+        }
         return distance < inDistance / 1000;
       } else {
         return false;

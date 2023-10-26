@@ -4,6 +4,7 @@ export interface SearchOption {
   searchValue: string;
   coords: TypeCoords | null;
   data: {
+    message?: string;
     little: string;
     text: string;
     color: TypeColor;
